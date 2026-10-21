@@ -12,6 +12,8 @@ dependencyResolutionManagement {
 
     repositories {
         mavenCentral()
+        // Hosts svg-charts-module, built straight from its GitHub tag.
+        maven { url 'https://jitpack.io' }
     }
 }
 

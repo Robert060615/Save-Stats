@@ -16,6 +16,7 @@ application {
 }
 
 dependencies {
+    implementation 'com.github.Robert060615:svg-charts-module:v1.1.0'
     implementation project(':savechecker')
 
     testImplementation libs.junit.jupiter.api
