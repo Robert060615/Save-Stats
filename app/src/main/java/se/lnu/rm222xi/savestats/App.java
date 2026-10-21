@@ -6,11 +6,12 @@ package se.lnu.rm222xi.savestats;
 public class App {
 
   /**
-   * Execution entry point.
+   * Execution entry point. Only wires the application to the terminal and hands over control.
    *
-   * @param args command-line arguments
+   * @param args paths to one or more save files, oldest first
    */
   public static void main(String[] args) {
-    System.out.println("Save Stats");
+    ConsoleView view = new ConsoleView(System.out);
+    new SaveStatsApp(view, new SaveLoader()).run(args);
   }
 }
