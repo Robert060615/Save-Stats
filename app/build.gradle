@@ -8,11 +8,11 @@ plugins {
     id 'application'
 }
 
-group = 'se.lnu.cli'
+group = 'se.lnu.rm222xi.savestats'
 version = '1.0.0'
 
 application {
-    mainClass = 'se.lnu.cli.App'
+    mainClass = 'se.lnu.rm222xi.savestats.App'
 }
 
 dependencies {
