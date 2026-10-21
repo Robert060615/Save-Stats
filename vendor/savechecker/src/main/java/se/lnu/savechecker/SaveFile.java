@@ -1,0 +1,68 @@
+package se.lnu.savechecker;
+
+/**
+ * Represents a single Generation I (Red/Blue/Yellow) Pokemon save file that
+ * has already been checked and is known to be genuine and uncorrupted.
+ *
+ * Creating a {@code SaveFile} is the only way to get one: the constructor
+ * checks the given bytes before anything else can use them, so any
+ * {@code SaveFile} that exists is guaranteed to hold valid Generation I
+ * save data.
+ */
+public final class SaveFile {
+
+    /** The player's name and badges, read from this save. */
+    private final Trainer trainer;
+
+    /** Which Pokémon the player has seen and caught, read from this save. */
+    private final PokedexStatus pokedexStatus;
+
+    /** The Pokémon the player is carrying (up to six), read from this save. */
+    private final Party party;
+
+    /**
+     * Reads and validates the raw bytes of a Generation I save file.
+     *
+     * @param data the raw bytes of the save file, exactly as read from disk
+     * @throws InvalidSaveFileException if the data is {@code null}, the wrong
+     *     size, or its stored checksum does not match its actual contents
+     */
+    public SaveFile(byte[] data) throws InvalidSaveFileException {
+        new SaveFileValidator().validate(data);
+        ByteReader reader = new ByteReader(data);
+
+        this.trainer = new Trainer(reader);
+        this.pokedexStatus = new PokedexStatus(reader);
+        this.party = new Party(reader);
+    }
+
+    /** 
+     * Returns the trainer info stored in this save: the player's name, trainer
+     * ID and which gym badges they have earned.
+     *
+     * @return the trainer from this save
+     */
+    public Trainer getTrainer() {
+        return this.trainer;
+    }
+
+    /**
+     * Returns the Pokédex progress stored in this save: which Pokémon the
+     * player has seen and which they have caught.
+     *
+     * @return the Pokédex status from this save
+     */
+    public PokedexStatus getPokedexStatus() {
+        return this.pokedexStatus;
+    }
+
+    /**
+     * Returns the player's current party: the up to six Pokémon they are
+     * carrying, in the order they appear in the in-game party menu.
+     *
+     * @return the party from this save
+     */
+    public Party getParty() {
+        return this.party;
+    }
+}

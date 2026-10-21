@@ -19,5 +19,9 @@ rootProject.name = 'save-stats'
 
 include("app")
 
+// Another student's module, copied in unchanged. See vendor/README.md.
+include("savechecker")
+project(":savechecker").projectDir = file("vendor/savechecker")
+
 // Composite build: pulls in the custom build logic and convention plugins.
 includeBuild("build-logic")
