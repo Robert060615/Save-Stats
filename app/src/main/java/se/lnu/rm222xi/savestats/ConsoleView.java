@@ -85,6 +85,10 @@ class ConsoleView {
   }
 
   private String readLine() {
+    if (!input.hasNextLine()) {
+      throw new InputClosedException();
+    }
+
     return input.nextLine();
   }
 }

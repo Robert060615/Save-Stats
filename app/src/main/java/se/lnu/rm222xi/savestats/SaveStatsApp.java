@@ -41,7 +41,11 @@ class SaveStatsApp {
       return;
     }
 
-    runMenu();
+    try {
+      runMenu();
+    } catch (InputClosedException e) {
+      view.showMessage("Input closed. The report was not saved.");
+    }
   }
 
   private List<GameSave> loadAll(String[] savePaths) {
