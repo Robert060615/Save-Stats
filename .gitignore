@@ -264,3 +264,4 @@ gradle-app.setting
 
 # Custom
 !.vscode/java.prefs
+save-stats-report.html
