@@ -11,7 +11,7 @@ public class App {
    * @param args paths to one or more save files, oldest first
    */
   public static void main(String[] args) {
-    ConsoleView view = new ConsoleView(System.out);
+    ConsoleView view = new ConsoleView(System.in, System.out);
     new SaveStatsApp(view, new SaveLoader()).run(args);
   }
 }
