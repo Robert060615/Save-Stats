@@ -5,6 +5,7 @@ package se.lnu.rm222xi.savestats;
  */
 enum MenuOption {
   PARTY_LEVELS("Add chart: party levels"),
+  SAVE_AND_QUIT("Save report and quit"),
   QUIT("Quit without saving");
 
   private final String description;
@@ -18,6 +19,6 @@ enum MenuOption {
   }
 
   boolean endsSession() {
-    return this == QUIT;
+    return this == SAVE_AND_QUIT || this == QUIT;
   }
 }

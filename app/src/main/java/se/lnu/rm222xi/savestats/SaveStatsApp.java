@@ -1,5 +1,7 @@
 package se.lnu.rm222xi.savestats;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
  */
 class SaveStatsApp {
 
+  private static final Path REPORT_FILE = Path.of("save-stats-report.html");
   private final ConsoleView view;
   private final SaveLoader loader;
   private final ChartBuilder chartBuilder = new ChartBuilder();
@@ -67,12 +70,28 @@ class SaveStatsApp {
   private void handle(MenuOption option) {
     switch (option) {
       case PARTY_LEVELS -> addPartyLevels();
+      case SAVE_AND_QUIT -> saveReport();
       case QUIT -> view.showMessage("Bye! The report was not saved.");
     }
   }
 
   private void addPartyLevels() {
     addToReport(chartBuilder.partyLevels(saves.getFirst()));
+  }
+
+  private void saveReport() {
+    if (report.isEmpty()) {
+      view.showMessage("The report is empty, so nothing was saved.");
+      return;
+    }
+
+    try {
+      Files.writeString(REPORT_FILE, report.toHtml());
+      view.showMessage("Report saved to " + REPORT_FILE.toAbsolutePath());
+      view.showMessage("Open it in a web browser to see the charts.");
+    } catch (IOException e) {
+      view.showError("Could not save the report: " + e.getMessage());
+    }
   }
 
   private void addToReport(ReportSection section) {
