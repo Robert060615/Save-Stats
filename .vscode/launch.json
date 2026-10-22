@@ -3,9 +3,16 @@
   "configurations": [
     {
       "type": "java",
+      "name": "App",
+      "request": "launch",
+      "mainClass": "se.lnu.rm222xi.savestats.App",
+      "projectName": "app"
+    },
+    {
+      "type": "java",
       "name": "Gradle: Debug Application",
-      "request": "launch", // Changed to launch to let VS Code manage the lifecycle
-      "mainClass": "", // Left empty since Gradle's build.gradle dynamically defines this
+      "request": "launch",
+      "mainClass": "",
       "preLaunchTask": "Gradle: run (debug)",
       "internalConsoleOptions": "neverOpen"
     }
