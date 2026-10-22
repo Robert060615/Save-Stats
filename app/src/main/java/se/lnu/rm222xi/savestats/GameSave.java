@@ -1,5 +1,7 @@
 package se.lnu.rm222xi.savestats;
 
+import java.util.List;
+import se.lnu.savechecker.PartyPokemon;
 import se.lnu.savechecker.SaveFile;
 
 /**
@@ -28,5 +30,21 @@ class GameSave {
 
   String getTrainerName() {
     return saveFile.getTrainer().getName();
+  }
+
+  boolean hasParty() {
+    return !partyMembers().isEmpty();
+  }
+
+  List<String> getPartyNicknames() {
+    return partyMembers().stream().map(PartyPokemon::getNickname).toList();
+  }
+
+  List<Double> getPartyLevels() {
+    return partyMembers().stream().map(pokemon -> (double) pokemon.getLevel()).toList();
+  }
+
+  private List<PartyPokemon> partyMembers() {
+    return saveFile.getParty().getPokemon();
   }
 }
