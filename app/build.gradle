@@ -23,3 +23,8 @@ dependencies {
     testRuntimeOnly    libs.junit.jupiter.engine
     testRuntimeOnly    "org.junit.platform:junit-platform-launcher"
 }
+
+// Lets the menu read from the terminal when started with ./gradlew run.
+tasks.named('run') {
+    standardInput = System.in
+}
