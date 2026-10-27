@@ -5,13 +5,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 import se.lnu.rm222xi.svgcharts.BarChart;
+import se.lnu.rm222xi.svgcharts.ChartOptions;
 import se.lnu.rm222xi.svgcharts.LineChart;
 import se.lnu.rm222xi.svgcharts.SvgChart;
 
 /**
- * Turns save data into report sections with charts drawn by the svg-charts module.
+ * Turns save data into report sections with charts drawn by the svg-charts module. All charts get
+ * the color chosen by the user.
  */
 class ChartBuilder {
+  private static final String DEFAULT_COLOR = "#1f77b4";
+
+  private String color = DEFAULT_COLOR;
+
+  /**
+   * Sets the color of the bars and lines in charts built from now on. Charts already in the report
+   * keep their color.
+   *
+   * @param color a hex color, for example {@code "#e4572e"}
+   * @throws se.lnu.rm222xi.svgcharts.ChartDataException if the color is not a hex color
+   */
+  void setColor(String color) {
+    createOptions().setColor(color);
+    this.color = color;
+  }
 
   ReportSection partyLevels(GameSave save) {
     String title = "Party levels - " + save.getTrainerName();
@@ -65,5 +82,11 @@ class ChartBuilder {
     chart.setLabels(labels);
     chart.setValues(values);
     return new ReportSection(title, chart.toSvg());
+  }
+
+  private ChartOptions createOptions() {
+    ChartOptions options = new ChartOptions();
+    options.setColor(color);
+    return options;
   }
 }

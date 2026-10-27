@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import se.lnu.rm222xi.svgcharts.ChartDataException;
+
 /**
  * Runs one session: loads the save files given on the command line and lets the user pick charts
  * from the menu until they quit.
@@ -79,6 +81,7 @@ class SaveStatsApp {
       case POKEMON_IVS -> addPokemonIvs();
       case POKEDEX_PROGRESS -> addToReport(chartBuilder.pokedexProgress(chooseSave()));
       case PROGRESS_BETWEEN_SAVES -> addProgressBetweenSaves();
+      case CHANGE_COLOR -> changeColor();
       case SAVE_AND_QUIT -> saveReport();
       case QUIT -> view.showMessage("Bye! The report was not saved.");
     }
@@ -107,6 +110,16 @@ class SaveStatsApp {
 
     addToReport(chartBuilder.caughtOverTime(saves));
     addToReport(chartBuilder.badgesOverTime(saves));
+  }
+
+  private void changeColor() {
+    String color = view.ask("Hex color, for example #e4572e:");
+    try {
+      chartBuilder.setColor(color);
+      view.showMessage("Charts added from now on will be " + color + ".");
+    } catch (ChartDataException e) {
+      view.showError(e.getMessage());
+    }
   }
 
   private void saveReport() {
