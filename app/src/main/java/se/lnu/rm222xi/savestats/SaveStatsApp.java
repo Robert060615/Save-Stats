@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Runs one session: loads the save files given on the command line and lets the user pick charts
@@ -83,17 +84,15 @@ class SaveStatsApp {
   }
 
   private void addPartyLevels() {
-    addToReport(chartBuilder.partyLevels(chooseSave()));
+    chooseSaveWithParty().ifPresent(save -> addToReport(chartBuilder.partyLevels(save)));
   }
 
   private void addPokemonStats() {
-    GameSave save = chooseSave();
-    addToReport(chartBuilder.stats(save, choosePokemon(save)));
+    chooseSaveWithParty().ifPresent(save -> addToReport(chartBuilder.stats(save, choosePokemon(save))));
   }
 
   private void addPokemonIvs() {
-    GameSave save = chooseSave();
-    addToReport(chartBuilder.ivs(save, choosePokemon(save)));
+    chooseSaveWithParty().ifPresent(save -> addToReport(chartBuilder.ivs(save, choosePokemon(save))));
   }
 
   private void saveReport() {
@@ -118,6 +117,22 @@ class SaveStatsApp {
 
     List<String> fileNames = saves.stream().map(GameSave::getFileName).toList();
     return saves.get(view.chooseFrom("Which save?", fileNames));
+  }
+
+  /**
+   * Lets the user choose a save, like {@link #chooseSave}, but only returns it if its party has at
+   * least one Pokémon. Otherwise the user is told why no chart can be drawn.
+   *
+   * @return the chosen save, or an empty Optional if its party is empty
+   */
+  private Optional<GameSave> chooseSaveWithParty() {
+    GameSave save = chooseSave();
+    if (!save.hasParty()) {
+      view.showError("The party in " + save.getFileName() + " is empty.");
+      return Optional.empty();
+    }
+
+    return Optional.of(save);
   }
 
   private int choosePokemon(GameSave save) {
