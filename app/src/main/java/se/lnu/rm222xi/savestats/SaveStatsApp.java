@@ -84,15 +84,18 @@ class SaveStatsApp {
   }
 
   private void addPartyLevels() {
-    chooseSaveWithParty().ifPresent(save -> addToReport(chartBuilder.partyLevels(save)));
+    chooseSaveWithParty().ifPresent(save -> 
+      addToReport(chartBuilder.partyLevels(save)));
   }
 
   private void addPokemonStats() {
-    chooseSaveWithParty().ifPresent(save -> addToReport(chartBuilder.stats(save, choosePokemon(save))));
+    chooseSaveWithParty().ifPresent(save -> 
+      addToReport(chartBuilder.stats(save, choosePokemon(save))));
   }
 
   private void addPokemonIvs() {
-    chooseSaveWithParty().ifPresent(save -> addToReport(chartBuilder.ivs(save, choosePokemon(save))));
+    chooseSaveWithParty().ifPresent(save -> 
+      addToReport(chartBuilder.ivs(save, choosePokemon(save))));
   }
 
   private void saveReport() {
