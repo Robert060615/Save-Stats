@@ -5,6 +5,7 @@ package se.lnu.rm222xi.savestats;
  */
 enum MenuOption {
   PARTY_LEVELS("Add chart: party levels"),
+  POKEDEX_PROGRESS("Add chart: Pokédex progress"),
   SAVE_AND_QUIT("Save report and quit"),
   QUIT("Quit without saving");
 

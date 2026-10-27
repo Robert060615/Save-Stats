@@ -14,6 +14,17 @@ class ChartBuilder {
     return drawSection(new BarChart(), title, save.getPartyNicknames(), save.getPartyLevels());
   }
 
+  ReportSection pokedexProgress(GameSave save) {
+    int caught = save.getCaughtCount();
+    int seenOnly = save.getSeenCount() - caught;
+    int notSeen = save.getPokedexSize() - save.getSeenCount();
+    String title = "Pokédex - " + caught + " of " + save.getPokedexSize() + " caught";
+
+    return drawSection(new BarChart(), title,
+      List.of("Caught", "Seen, not caught", "Not seen"),
+      List.of((double) caught, (double) seenOnly, (double) notSeen));
+  }
+
   private ReportSection drawSection(SvgChart chart, String title, List<String> labels,
       List<Double> values) {
     chart.setTitle(title);

@@ -74,6 +74,7 @@ class SaveStatsApp {
   private void handle(MenuOption option) {
     switch (option) {
       case PARTY_LEVELS -> addPartyLevels();
+      case POKEDEX_PROGRESS -> addToReport(chartBuilder.pokedexProgress(chooseSave()));
       case SAVE_AND_QUIT -> saveReport();
       case QUIT -> view.showMessage("Bye! The report was not saved.");
     }

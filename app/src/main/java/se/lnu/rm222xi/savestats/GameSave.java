@@ -10,6 +10,8 @@ import se.lnu.savechecker.SaveFile;
  */
 class GameSave {
 
+  private static final int POKEDEX_SIZE = 151;
+
   private final String fileName;
   private final SaveFile saveFile;
 
@@ -30,6 +32,18 @@ class GameSave {
 
   String getTrainerName() {
     return saveFile.getTrainer().getName();
+  }
+
+  int getSeenCount() {
+    return saveFile.getPokedexStatus().getSeenCount();
+  }
+
+  int getCaughtCount() {
+    return saveFile.getPokedexStatus().getCaughtCount();
+  }
+
+  int getPokedexSize() {
+    return POKEDEX_SIZE;
   }
 
   boolean hasParty() {
