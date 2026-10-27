@@ -14,6 +14,7 @@ import se.lnu.rm222xi.svgcharts.SvgChart;
  * the color chosen by the user.
  */
 class ChartBuilder {
+  
   private static final String DEFAULT_COLOR = "#1f77b4";
 
   private String color = DEFAULT_COLOR;
