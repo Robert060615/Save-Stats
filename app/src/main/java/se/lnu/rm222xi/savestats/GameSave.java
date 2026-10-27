@@ -74,6 +74,19 @@ class GameSave {
         pokemon.getSpeed(), pokemon.getSpecial()));
   }
 
+  /**
+   * Returns the individual values (IVs, 0 to 15) of one party Pokémon, in the same order as
+   * {@link #getStatsOf}.
+   *
+   * @param partyIndex the position in the party, starting at 0
+   * @return stat name mapped to its IV
+   */
+  Map<String, Double> getIvsOf(int partyIndex) {
+    PartyPokemon pokemon = partyMember(partyIndex);
+    return withStatNames(List.of(pokemon.getHpIv(), pokemon.getAttackIv(),
+        pokemon.getDefenseIv(), pokemon.getSpeedIv(), pokemon.getSpecialIv()));
+  }
+
   private List<PartyPokemon> partyMembers() {
     return saveFile.getParty().getPokemon();
   }

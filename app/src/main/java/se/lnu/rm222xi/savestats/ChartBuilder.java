@@ -32,6 +32,11 @@ class ChartBuilder {
     return drawBarSection(title, save.getStatsOf(partyIndex));
   }
 
+  ReportSection ivs(GameSave save, int partyIndex) {
+    String title = "IVs of " + save.getPartyNicknames().get(partyIndex) + " (0-15)";
+    return drawBarSection(title, save.getIvsOf(partyIndex));
+  }
+
   private ReportSection drawBarSection(String title, Map<String, Double> valuesByLabel) {
     return drawSection(new BarChart(), title,
         new ArrayList<>(valuesByLabel.keySet()), new ArrayList<>(valuesByLabel.values()));

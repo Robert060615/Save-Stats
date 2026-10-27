@@ -75,6 +75,7 @@ class SaveStatsApp {
     switch (option) {
       case PARTY_LEVELS -> addPartyLevels();
       case POKEMON_STATS -> addPokemonStats();
+      case POKEMON_IVS -> addPokemonIvs();
       case POKEDEX_PROGRESS -> addToReport(chartBuilder.pokedexProgress(chooseSave()));
       case SAVE_AND_QUIT -> saveReport();
       case QUIT -> view.showMessage("Bye! The report was not saved.");
@@ -88,6 +89,11 @@ class SaveStatsApp {
   private void addPokemonStats() {
     GameSave save = chooseSave();
     addToReport(chartBuilder.stats(save, choosePokemon(save)));
+  }
+
+  private void addPokemonIvs() {
+    GameSave save = chooseSave();
+    addToReport(chartBuilder.ivs(save, choosePokemon(save)));
   }
 
   private void saveReport() {
