@@ -1,12 +1,13 @@
 # Save Stats
 
-A console application for people who play Pokémon Red, Blue or Yellow. You give it one or more
-save files and it tells you what is in them, with the goal of turning them into an HTML report full
-of charts.
+A console application for people who play Pokémon Red, Blue or Yellow. Give it one or more save
+files, pick the charts you want from a menu, and get an HTML report you can open in any web
+browser.
 
-> **Status: unfinished.** The application currently loads and validates save files and reports
-> problems with them. The charts and the HTML report (R2–R6) are not implemented yet. See
-> [Requirements](#requirements) for what works.
+<p>
+  <img src="docs/party-levels.svg" alt="Bar chart of the levels of five party Pokémon" width="48%">
+  <img src="docs/caught-per-save.svg" alt="Line chart of Pokémon caught in two saves" width="48%">
+</p>
 
 ## Vision
 
@@ -16,64 +17,146 @@ numbers off the game's menus.
 
 ## Requirements
 
-| ID | Requirement | Status |
-|---|---|---|
-| R1 | The user can start the application with one or more save files and see which were loaded, with the trainer's name. | ✅ Done |
-| R2 | The user can add a bar chart of the party's levels to a report. | ❌ Not done |
-| R3 | The user can add a bar chart of one chosen Pokémon's stats or IVs. | ❌ Not done |
-| R4 | The user can add a chart of the Pokédex progress (caught, seen, not seen of 151). | ❌ Not done |
-| R5 | With several saves, the user can add line charts of Pokémon caught and badges per save. | ❌ Not done |
-| R6 | The user can choose the chart color and save the report as an HTML file. | ❌ Not done |
-| R7 | A missing, unreadable or invalid file gives a clear error message; the other files are still loaded. | ✅ Done |
+| ID | Requirement |
+|---|---|
+| R1 | The user starts the application with one or more save files and sees which were loaded, with the trainer's name. |
+| R2 | The user can add a bar chart of the party's levels to the report. |
+| R3 | The user can add a bar chart of one chosen Pokémon's stats, or of its IVs. |
+| R4 | The user can add a chart of the Pokédex progress: caught, seen but not caught, and not seen, out of 151. |
+| R5 | With two or more saves, the user can add line charts of Pokémon caught and badges per save. |
+| R6 | The user can change the color of the charts and save the report as an HTML file. |
+| R7 | A missing, unreadable or invalid file, or an invalid answer in the menu, gives a clear message instead of a crash. The other files are still loaded. |
 
-## Running the application
+All requirements are implemented. How they were tested is described in
+[TEST_REPORT.md](TEST_REPORT.md).
 
-Requirements: **JDK 25** and Git.
+## Getting started
+
+### Requirements
+
+- **Java 25** or later. Check with `java -version`. An older Java gives the error
+  `UnsupportedClassVersionError`.
+- A save file from Pokémon Red, Blue or Yellow (`.sav` or `.srm`, exactly 32,768 bytes), for
+  example from an emulator. No game of your own? Use the files in [samples/](samples/).
+
+### Download and run
+
+1. Download `save-stats-1.0.0.jar` from the
+   [latest release](https://github.com/Robert060615/app-lab3/releases/latest).
+2. Open a terminal in the folder where the file is and run it with your save files, oldest first:
+
+   ```bash
+   java -jar save-stats-1.0.0.jar my-game.sav
+   java -jar save-stats-1.0.0.jar monday.sav friday.sav
+   ```
+
+### Or build it yourself
 
 ```bash
 git clone https://github.com/Robert060615/app-lab3.git
 cd app-lab3
-./gradlew :app:run --args="../vendor/savechecker/src/test/resources/saves/Yellow/Yellow_Randomizer_02.srm"
+./gradlew :app:fatJar
+java -jar app/build/libs/save-stats-1.0.0.jar samples/yellow-2.srm samples/yellow-3.srm
 ```
 
-On Windows, use `gradlew.bat` instead of `./gradlew`. Paths given to `--args` are relative to the
-`app/` folder. Several files can be given, separated by spaces, oldest first.
+On Windows, use `gradlew.bat` instead of `./gradlew`.
 
-Example output:
+## Using the application
+
+When the files are loaded, a menu is shown. Type a number and press Enter.
 
 ```text
-Save 1: Yellow_Randomizer_02.srm (trainer YELLOW)
+Save 1: yellow-2.srm (trainer A)
+Save 2: yellow-3.srm (trainer YELLOW)
+
+What do you want to do?
+  1) Add chart: party levels
+  2) Add chart: stats of one Pokémon
+  3) Add chart: IVs of one Pokémon
+  4) Add chart: Pokédex progress
+  5) Add charts: progress between saves
+  6) Change chart color
+  7) Save report and quit
+  8) Quit without saving
+Choose 1-8: 1
+Which save?
+  1) yellow-2.srm
+  2) yellow-3.srm
+Choose 1-2: 1
+Added "Party levels - A" to the report.
 ```
 
-Test save files are included in `vendor/savechecker/src/test/resources/saves/`.
+| Choice | What you get |
+|---|---|
+| Party levels | One bar per Pokémon in the party, showing its level. |
+| Stats of one Pokémon | Max HP, Attack, Defense, Speed and Special of the Pokémon you choose. |
+| IVs of one Pokémon | Its individual values (0–15), the hidden values that make two Pokémon of the same kind differ. |
+| Pokédex progress | How many of the 151 Pokémon are caught, seen but not caught, and not seen. |
+| Progress between saves | Two line charts, Pokémon caught and badges, with one point per save in the order you gave the files. Needs at least two files. |
+| Change chart color | A hex color such as `#e4572e`. Charts added after the change get the new color. |
 
-## Modules used
+Choose **Save report and quit** when you are done. The report is saved as
+`save-stats-report.html` in the folder you ran the command from (an existing file with that name is
+replaced), and the full path is printed. Open it in a web browser.
 
-| Module | Role | How it is included |
-|---|---|---|
-| [svg-charts-module](https://github.com/Robert060615/svg-charts-module) (my own) | Draws the bar and line charts as SVG | Gradle dependency from JitPack, `v1.1.0` |
-| [Pokemon-Red-Blue-Savechecker-Module](https://github.com/Akistolol88/Pokemon-Red-Blue-Savechecker-Module) (Akistolol88) | Reads and validates the save files | Copied in unchanged to `vendor/savechecker`, see [vendor/README.md](vendor/README.md) |
+### Good to know
 
-Neither module depends on this application.
+- Give the files **oldest first**. The progress charts label them *Save 1*, *Save 2* … in that
+  order; the numbers match the list printed when the files are loaded.
+- The progress charts are most useful with saves from **one** game at different times. The files
+  in `samples/` come from different games, so they show the charts working but not real progress.
+- A save whose party is empty (before you get your first Pokémon) can only be used for the Pokédex
+  and progress charts.
+- Press **Ctrl+D** (Ctrl+Z then Enter on Windows) to quit at any time without saving.
 
 ## For developers
 
+### How it is built
+
+The application uses two modules, kept as separate projects. Neither of them depends on the
+application.
+
+| Module | Used for | Included as |
+|---|---|---|
+| [svg-charts-module](https://github.com/Robert060615/svg-charts-module) (my own) | Drawing the bar and line charts as SVG | Gradle dependency from JitPack, `v1.1.0` |
+| [Pokemon-Red-Blue-Savechecker-Module](https://github.com/Akistolol88/Pokemon-Red-Blue-Savechecker-Module) (Akistolol88) | Reading and validating save files | Copied in unchanged to [vendor/savechecker](vendor/), built as a Gradle subproject |
+
+All application code is in `app/src/main/java/se/lnu/rm222xi/savestats/`:
+
 | Class | Responsibility |
 |---|---|
-| `App` | Entry point. Only creates the objects and starts `SaveStatsApp`. |
-| `SaveStatsApp` | Runs one session: loads the save files given on the command line. |
-| `ConsoleView` | Everything the user sees in the terminal. |
+| `App` | Entry point. Creates the objects and starts `SaveStatsApp`; nothing else. |
+| `SaveStatsApp` | Runs one session: loads the files, runs the menu, saves the report. |
+| `ConsoleView` | Everything the user sees and types. Asks again until an answer is valid. |
+| `MenuOption` | The menu choices, in the order they are shown. |
 | `SaveLoader` | Reads a file and turns every kind of failure into one `SaveLoadException`. |
-| `GameSave` | Wraps the savechecker module, so no other class depends on it. |
-| `Report`, `ReportSection` | The HTML report (not yet used). |
+| `GameSave` | The only class that uses the savechecker module's types (besides `SaveLoader`). |
+| `ChartBuilder` | Turns save data into charts with svg-charts, in the chosen color. |
+| `Report`, `ReportSection` | The HTML page and the charts in it. |
+| `InputClosedException` | Thrown when the input ends (Ctrl+D), so the session can stop calmly. |
 
-```bash
-./gradlew build   # compile, test, Checkstyle and PMD
-```
+To add a new chart: add a method to `ChartBuilder` (and to `GameSave` if it needs new data), a
+value to `MenuOption`, and a case in `SaveStatsApp.handle`. The compiler points out the missing
+case.
 
-## Testing
+### Building and testing
 
-See [TEST_REPORT.md](TEST_REPORT.md).
+| Command | What it does |
+|---|---|
+| `./gradlew build` | Compiles, runs the unit tests and checks the code with Checkstyle and PMD. |
+| `./gradlew :app:test` | Runs the unit tests. A summary is saved to `app/build/reports/test-summary.log`. |
+| `./gradlew :app:fatJar` | Builds `app/build/libs/save-stats-1.0.0.jar` with both modules inside. |
+| `./gradlew :app:run --console=plain --args="../samples/red.sav"` | Runs from source. Paths are relative to `app/`; `--console=plain` keeps Gradle's progress bar out of the menu. |
+
+### Project structure
+
+| Folder | Content |
+|---|---|
+| `app/` | The application and its unit tests. |
+| `vendor/` | The other student's module, unchanged. See [vendor/README.md](vendor/README.md). |
+| `samples/` | Save files for trying the application. See [samples/README.md](samples/README.md). |
+| `docs/` | The example charts in this README. |
+| `config/`, `build-logic/`, `gradle/` | Build, Checkstyle and PMD configuration from the course template. |
 
 ## License
 
