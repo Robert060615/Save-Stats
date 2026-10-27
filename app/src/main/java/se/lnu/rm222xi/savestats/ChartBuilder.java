@@ -32,7 +32,7 @@ class ChartBuilder {
 
   ReportSection partyLevels(GameSave save) {
     String title = "Party levels - " + save.getTrainerName();
-    return drawSection(new BarChart(), title, save.getPartyNicknames(), save.getPartyLevels());
+    return drawSection(new BarChart(createOptions()), title, save.getPartyNicknames(), save.getPartyLevels());
   }
 
   ReportSection pokedexProgress(GameSave save) {
@@ -41,7 +41,7 @@ class ChartBuilder {
     int notSeen = save.getPokedexSize() - save.getSeenCount();
     String title = "Pokédex - " + caught + " of " + save.getPokedexSize() + " caught";
 
-    return drawSection(new BarChart(), title,
+    return drawSection(new BarChart(createOptions()), title,
       List.of("Caught", "Seen, not caught", "Not seen"),
       List.of((double) caught, (double) seenOnly, (double) notSeen));
   }
@@ -58,17 +58,17 @@ class ChartBuilder {
 
   ReportSection caughtOverTime(List<GameSave> saves) {
     List<Double> caughtCounts = saves.stream().map(save -> (double) save.getCaughtCount()).toList();
-    return drawSection(new LineChart(), "Pokémon caught per save", saveNumbersOf(saves),
+    return drawSection(new LineChart(createOptions()), "Pokémon caught per save", saveNumbersOf(saves),
         caughtCounts);
   }
 
   ReportSection badgesOverTime(List<GameSave> saves) {
     List<Double> badgeCounts = saves.stream().map(save -> (double) save.getBadgeCount()).toList();
-    return drawSection(new LineChart(), "Badges per save", saveNumbersOf(saves), badgeCounts);
+    return drawSection(new LineChart(createOptions()), "Badges per save", saveNumbersOf(saves), badgeCounts);
   }
 
   private ReportSection drawBarSection(String title, Map<String, Double> valuesByLabel) {
-    return drawSection(new BarChart(), title,
+    return drawSection(new BarChart(createOptions()), title,
         new ArrayList<>(valuesByLabel.keySet()), new ArrayList<>(valuesByLabel.values()));
   }
 
