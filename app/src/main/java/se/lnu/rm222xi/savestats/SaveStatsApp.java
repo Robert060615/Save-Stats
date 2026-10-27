@@ -80,7 +80,7 @@ class SaveStatsApp {
   }
 
   private void addPartyLevels() {
-    addToReport(chartBuilder.partyLevels(saves.getFirst()));
+    addToReport(chartBuilder.partyLevels(chooseSave()));
   }
 
   private void saveReport() {
@@ -96,6 +96,15 @@ class SaveStatsApp {
     } catch (IOException e) {
       view.showError("Could not save the report: " + e.getMessage());
     }
+  }
+
+  private GameSave chooseSave() {
+    if (saves.size() == 1) {
+      return saves.getFirst();
+    }
+
+    List<String> fileNames = saves.stream().map(GameSave::getFileName).toList();
+    return saves.get(view.chooseFrom("Which save?", fileNames));
   }
 
   private void addToReport(ReportSection section) {

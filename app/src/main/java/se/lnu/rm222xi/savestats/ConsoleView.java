@@ -3,6 +3,7 @@ package se.lnu.rm222xi.savestats;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -58,6 +59,22 @@ class ConsoleView {
     }
 
     return options[readNumberUpTo(options.length) - 1];
+  }
+
+  /**
+   * Shows a numbered list and asks until the user picks one of the items.
+   *
+   * @param question the question shown above the list
+   * @param items the items to choose from, at least one
+   * @return the index of the chosen item, starting at 0
+   */
+  int chooseFrom(String question, List<String> items) {
+    output.println(question);
+    for (int i = 0; i < items.size(); i++) {
+      output.println("  " + (i + 1) + ") " + items.get(i));
+    }
+
+    return readNumberUpTo(items.size()) - 1;
   }
 
   String ask(String question) {
