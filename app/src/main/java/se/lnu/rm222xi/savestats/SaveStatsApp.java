@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import se.lnu.rm222xi.svgcharts.ChartDataException;
 
 /**
@@ -93,7 +92,7 @@ class SaveStatsApp {
   }
 
   private void addPokemonStats() {
-    chooseSaveWithParty().ifPresent(save -> 
+    chooseSaveWithParty().ifPresent(save ->
         addToReport(chartBuilder.stats(save, choosePokemon(save))));
   }
 

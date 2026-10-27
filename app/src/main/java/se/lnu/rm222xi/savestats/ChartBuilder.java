@@ -14,7 +14,7 @@ import se.lnu.rm222xi.svgcharts.SvgChart;
  * the color chosen by the user.
  */
 class ChartBuilder {
-  
+
   private static final String DEFAULT_COLOR = "#1f77b4";
 
   private String color = DEFAULT_COLOR;
@@ -33,7 +33,8 @@ class ChartBuilder {
 
   ReportSection partyLevels(GameSave save) {
     String title = "Party levels - " + save.getTrainerName();
-    return drawSection(new BarChart(createOptions()), title, save.getPartyNicknames(), save.getPartyLevels());
+    return drawSection(new BarChart(createOptions()),
+        title, save.getPartyNicknames(), save.getPartyLevels());
   }
 
   ReportSection pokedexProgress(GameSave save) {
@@ -43,8 +44,8 @@ class ChartBuilder {
     String title = "Pokédex - " + caught + " of " + save.getPokedexSize() + " caught";
 
     return drawSection(new BarChart(createOptions()), title,
-      List.of("Caught", "Seen, not caught", "Not seen"),
-      List.of((double) caught, (double) seenOnly, (double) notSeen));
+        List.of("Caught", "Seen, not caught", "Not seen"),
+        List.of((double) caught, (double) seenOnly, (double) notSeen));
   }
 
   ReportSection stats(GameSave save, int partyIndex) {
@@ -59,13 +60,16 @@ class ChartBuilder {
 
   ReportSection caughtOverTime(List<GameSave> saves) {
     List<Double> caughtCounts = saves.stream().map(save -> (double) save.getCaughtCount()).toList();
-    return drawSection(new LineChart(createOptions()), "Pokémon caught per save", saveNumbersOf(saves),
-        caughtCounts);
+    return drawSection(new LineChart(createOptions()),
+        "Pokémon caught per save",
+        saveNumbersOf(saves), caughtCounts);
   }
 
   ReportSection badgesOverTime(List<GameSave> saves) {
     List<Double> badgeCounts = saves.stream().map(save -> (double) save.getBadgeCount()).toList();
-    return drawSection(new LineChart(createOptions()), "Badges per save", saveNumbersOf(saves), badgeCounts);
+    return drawSection(new LineChart(createOptions()),
+        "Badges per save",
+        saveNumbersOf(saves), badgeCounts);
   }
 
   private ReportSection drawBarSection(String title, Map<String, Double> valuesByLabel) {
