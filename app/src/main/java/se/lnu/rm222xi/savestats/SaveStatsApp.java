@@ -74,6 +74,7 @@ class SaveStatsApp {
   private void handle(MenuOption option) {
     switch (option) {
       case PARTY_LEVELS -> addPartyLevels();
+      case POKEMON_STATS -> addPokemonStats();
       case POKEDEX_PROGRESS -> addToReport(chartBuilder.pokedexProgress(chooseSave()));
       case SAVE_AND_QUIT -> saveReport();
       case QUIT -> view.showMessage("Bye! The report was not saved.");
@@ -82,6 +83,11 @@ class SaveStatsApp {
 
   private void addPartyLevels() {
     addToReport(chartBuilder.partyLevels(chooseSave()));
+  }
+
+  private void addPokemonStats() {
+    GameSave save = chooseSave();
+    addToReport(chartBuilder.stats(save, choosePokemon(save)));
   }
 
   private void saveReport() {
@@ -106,6 +112,10 @@ class SaveStatsApp {
 
     List<String> fileNames = saves.stream().map(GameSave::getFileName).toList();
     return saves.get(view.chooseFrom("Which save?", fileNames));
+  }
+
+  private int choosePokemon(GameSave save) {
+    return view.chooseFrom("Which Pokémon?", save.getPartyNicknames());
   }
 
   private void addToReport(ReportSection section) {

@@ -5,7 +5,7 @@ package se.lnu.rm222xi.savestats;
  * an answer.
  */
 class InputClosedException extends RuntimeException {
-  private static final long serialVersionsUID = 1L;
+  private static final long serialVersionUID = 1L;
 
   InputClosedException() {
     super("The input was closed");

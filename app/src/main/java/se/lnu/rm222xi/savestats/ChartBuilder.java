@@ -1,6 +1,8 @@
 package se.lnu.rm222xi.savestats;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import se.lnu.rm222xi.svgcharts.BarChart;
 import se.lnu.rm222xi.svgcharts.SvgChart;
 
@@ -10,7 +12,7 @@ import se.lnu.rm222xi.svgcharts.SvgChart;
 class ChartBuilder {
 
   ReportSection partyLevels(GameSave save) {
-    String title = "Party levels – " + save.getTrainerName();
+    String title = "Party levels - " + save.getTrainerName();
     return drawSection(new BarChart(), title, save.getPartyNicknames(), save.getPartyLevels());
   }
 
@@ -23,6 +25,16 @@ class ChartBuilder {
     return drawSection(new BarChart(), title,
       List.of("Caught", "Seen, not caught", "Not seen"),
       List.of((double) caught, (double) seenOnly, (double) notSeen));
+  }
+
+  ReportSection stats(GameSave save, int partyIndex) {
+    String title = "Stats of " + save.getPartyNicknames().get(partyIndex);
+    return drawBarSection(title, save.getStatsOf(partyIndex));
+  }
+
+  private ReportSection drawBarSection(String title, Map<String, Double> valuesByLabel) {
+    return drawSection(new BarChart(), title,
+        new ArrayList<>(valuesByLabel.keySet()), new ArrayList<>(valuesByLabel.values()));
   }
 
   private ReportSection drawSection(SvgChart chart, String title, List<String> labels,
