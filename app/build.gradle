@@ -28,3 +28,18 @@ dependencies {
 tasks.named('run') {
     standardInput = System.in
 }
+
+// One runnable jar with both modules inside, so users only need Java to run it.
+tasks.register('fatJar', Jar) {
+    archiveBaseName = 'save-stats'
+    archiveClassifier = ''
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
