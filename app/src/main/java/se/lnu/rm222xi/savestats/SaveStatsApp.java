@@ -78,6 +78,7 @@ class SaveStatsApp {
       case POKEMON_STATS -> addPokemonStats();
       case POKEMON_IVS -> addPokemonIvs();
       case POKEDEX_PROGRESS -> addToReport(chartBuilder.pokedexProgress(chooseSave()));
+      case PROGRESS_BETWEEN_SAVES -> addProgressBetweenSaves();
       case SAVE_AND_QUIT -> saveReport();
       case QUIT -> view.showMessage("Bye! The report was not saved.");
     }
@@ -96,6 +97,16 @@ class SaveStatsApp {
   private void addPokemonIvs() {
     chooseSaveWithParty().ifPresent(save -> 
       addToReport(chartBuilder.ivs(save, choosePokemon(save))));
+  }
+
+  private void addProgressBetweenSaves() {
+    if (saves.size() < 2) {
+      view.showError("Start the application with at least two save files to compare them.");
+      return;
+    }
+
+    addToReport(chartBuilder.caughtOverTime(saves));
+    addToReport(chartBuilder.badgesOverTime(saves));
   }
 
   private void saveReport() {

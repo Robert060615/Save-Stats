@@ -38,6 +38,10 @@ class GameSave {
     return saveFile.getTrainer().getName();
   }
 
+  int getBadgeCount() {
+    return saveFile.getTrainer().getBadges().size();
+  }
+
   int getSeenCount() {
     return saveFile.getPokedexStatus().getSeenCount();
   }

@@ -3,7 +3,9 @@ package se.lnu.rm222xi.savestats;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import se.lnu.rm222xi.svgcharts.BarChart;
+import se.lnu.rm222xi.svgcharts.LineChart;
 import se.lnu.rm222xi.svgcharts.SvgChart;
 
 /**
@@ -37,9 +39,24 @@ class ChartBuilder {
     return drawBarSection(title, save.getIvsOf(partyIndex));
   }
 
+  ReportSection caughtOverTime(List<GameSave> saves) {
+    List<Double> caughtCounts = saves.stream().map(save -> (double) save.getCaughtCount()).toList();
+    return drawSection(new LineChart(), "Pokémon caught per save", saveNumbersOf(saves),
+        caughtCounts);
+  }
+
+  ReportSection badgesOverTime(List<GameSave> saves) {
+    List<Double> badgeCounts = saves.stream().map(save -> (double) save.getBadgeCount()).toList();
+    return drawSection(new LineChart(), "Badges per save", saveNumbersOf(saves), badgeCounts);
+  }
+
   private ReportSection drawBarSection(String title, Map<String, Double> valuesByLabel) {
     return drawSection(new BarChart(), title,
         new ArrayList<>(valuesByLabel.keySet()), new ArrayList<>(valuesByLabel.values()));
+  }
+
+  private List<String> saveNumbersOf(List<GameSave> saves) {
+    return IntStream.rangeClosed(1, saves.size()).mapToObj(number -> "Save " + number).toList();
   }
 
   private ReportSection drawSection(SvgChart chart, String title, List<String> labels,

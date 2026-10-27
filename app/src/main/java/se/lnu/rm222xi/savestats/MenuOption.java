@@ -8,6 +8,7 @@ enum MenuOption {
   POKEMON_STATS("Add chart: stats of one Pokémon"),
   POKEMON_IVS("Add chart: IVs of one Pokémon"),
   POKEDEX_PROGRESS("Add chart: Pokédex progress"),
+  PROGRESS_BETWEEN_SAVES("Add charts: progress between saves"),
   SAVE_AND_QUIT("Save report and quit"),
   QUIT("Quit without saving");
 
