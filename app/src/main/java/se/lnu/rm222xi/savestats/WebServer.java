@@ -3,6 +3,7 @@ package se.lnu.rm222xi.savestats;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -18,23 +19,19 @@ class WebServer {
   /** Lets a few requests run at the same time instead of one after another. */
   private static final int THREADS = 4;
   private static final int HTTP_OK = 200;
-  private static final String START_PAGE =
-      """
-      <!DOCTYPE html>
-      <html lang="en">
-      <head><meta charset="utf-8"><title>Save Stats</title></head>
-      <body><h1>Save Stats</h1><p>The web server is running.</p></body>
-      </html>
-      """;
+  private static final String START_PAGE_FILE = "start-page.html";
   private final HttpServer server;
+  private final String startPage;
 
   /**
    * Creates the server without starting it.
    *
    * @param port the port to listen on
-   * @throws IOException if the port is already in use or cannot be opened
+   * @throws IOException if the port is already in use or cannot be opened, or if the start page
+   *     is missing from the jar
    */
   WebServer(int port) throws IOException {
+    startPage = readResource(START_PAGE_FILE);
     InetSocketAddress address = new InetSocketAddress(InetAddress.getLoopbackAddress(), port);
     server = HttpServer.create(address, 0);
     server.createContext("/", this::showStartPage);
@@ -55,7 +52,24 @@ class WebServer {
   }
 
   private void showStartPage(HttpExchange exchange) throws IOException {
-    sendHtml(exchange, HTTP_OK, START_PAGE);
+    sendHtml(exchange, HTTP_OK, startPage);
+  }
+
+  /**
+   * Reads a text file that is packaged next to this class in the jar.
+   *
+   * @param name the file name, relative to this package
+   * @return the contents of the file
+   * @throws IOException if the file is missing or cannot be read
+   */
+  private static String readResource(String name) throws IOException {
+    try (InputStream input = WebServer.class.getResourceAsStream(name)) {
+      if (input == null) {
+        throw new IOException("Missing resource: " + name);
+      }
+
+      return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+    }
   }
 
   private void sendHtml(HttpExchange exchange, int status, String html) throws IOException {

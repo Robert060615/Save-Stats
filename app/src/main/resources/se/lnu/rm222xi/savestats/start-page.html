@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Save Stats</title>
+<style>
+  body { font-family: sans-serif; max-width: 640px; margin: 2em auto; padding: 0 1em; }
+  fieldset { margin-bottom: 1em; }
+  label { display: block; margin: 0.3em 0; }
+</style>
+</head>
+<body>
+<h1>Save Stats</h1>
+<p>Choose one or more Pokémon Red, Blue or Yellow save files, oldest first, and the charts you
+  want to see.</p>
+
+<form id="report-form" method="post" action="/report">
+  <fieldset>
+    <legend>Save files</legend>
+    <input id="files" type="file" multiple required>
+  </fieldset>
+
+  <fieldset>
+    <legend>Charts</legend>
+    <label><input type="checkbox" name="chart" value="partyLevels" checked> Party levels</label>
+    <label><input type="checkbox" name="chart" value="pokedex"> Pokédex progress</label>
+    <label><input type="checkbox" name="chart" value="team"> Stats and IVs for the whole
+      party</label>
+    <label><input id="progress" type="checkbox" name="chart" value="progress" disabled>
+      Progress between saves (needs at least two files)</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Color</legend>
+    <label><input type="color" name="color" value="#1f77b4"> Bars and lines</label>
+  </fieldset>
+
+  <button type="submit">Show charts</button>
+</form>
+
+<script>
+  const form = document.getElementById('report-form');
+  const files = document.getElementById('files');
+  const progress = document.getElementById('progress');
+
+  files.addEventListener('change', () => {
+    progress.disabled = files.files.length < 2;
+    if (progress.disabled) {
+      progress.checked = false;
+    }
+  });
+
+  // The file input has no name, so the browser does not send it. Instead each file is added as
+  // a file name and its contents in Base64, in the order the user chose them.
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    form.querySelectorAll('input[type=hidden]').forEach((input) => input.remove());
+
+    for (const file of files.files) {
+      addHiddenField('fileName', file.name);
+      addHiddenField('save', await toBase64(file));
+    }
+
+    form.submit();
+  });
+
+  function addHiddenField(name, value) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      // The result is "data:<type>;base64,<data>"; only the part after the comma is the file.
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+</script>
+</body>
+</html>
