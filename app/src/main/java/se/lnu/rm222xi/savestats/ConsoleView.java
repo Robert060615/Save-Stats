@@ -29,6 +29,7 @@ class ConsoleView {
   void showUsage() {
     output.println("Usage: java -jar save-stats.jar <save file> [more save files, oldest first]");
     output.println("Example: java -jar save-stats.jar samples/red.sav");
+    output.println("Or start it in a web browser: java -jar save-stats.jar --web");
   }
 
   void showLoadedSave(int saveNumber, GameSave save) {
