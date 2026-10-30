@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'se.lnu.rm222xi.savestats'
-version = '1.0.0'
+version = '1.1.0'
 
 application {
     mainClass = 'se.lnu.rm222xi.savestats.App'

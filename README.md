@@ -1,8 +1,9 @@
 # Save Stats
 
-A console application for people who play Pokémon Red, Blue or Yellow. Give it one or more save
-files, pick the charts you want from a menu, and get an HTML report you can open in any web
-browser.
+An application for people who play Pokémon Red, Blue or Yellow. Give it one or more save files,
+pick the charts you want, and see them as an HTML report. Use it in the terminal, where you pick
+charts from a menu and save the report as a file, or start it with `--web` and do everything in
+your web browser.
 
 <p>
   <img src="docs/party-levels.svg" alt="Bar chart of the levels of five party Pokémon" width="48%">
@@ -26,6 +27,8 @@ numbers off the game's menus.
 | R5 | With two or more saves, the user can add line charts of Pokémon caught and badges per save. |
 | R6 | The user can change the color of the charts and save the report as an HTML file. |
 | R7 | A missing, unreadable or invalid file, or an invalid answer in the menu, gives a clear message instead of a crash. The other files are still loaded. |
+| R8 | Started with `--web`, the user chooses save files, charts and a color on a page in the web browser and sees the charts on the next page. |
+| R9 | In the web browser, an invalid or too large file, or a choice that is missing, gives a page with a clear message instead of a crash. |
 
 All requirements are implemented. How they were tested is described in
 [TEST_REPORT.md](TEST_REPORT.md).
@@ -41,13 +44,19 @@ All requirements are implemented. How they were tested is described in
 
 ### Download and run
 
-1. Download `save-stats-1.0.0.jar` from the
+1. Download `save-stats-1.1.0.jar` from the
    [latest release](https://github.com/Robert060615/app-lab3/releases/latest).
 2. Open a terminal in the folder where the file is and run it with your save files, oldest first:
 
    ```bash
-   java -jar save-stats-1.0.0.jar my-game.sav
-   java -jar save-stats-1.0.0.jar monday.sav friday.sav
+   java -jar save-stats-1.1.0.jar my-game.sav
+   java -jar save-stats-1.1.0.jar monday.sav friday.sav
+   ```
+
+   Or start it in the web browser instead, see [In the web browser](#in-the-web-browser):
+
+   ```bash
+   java -jar save-stats-1.1.0.jar --web
    ```
 
 ### Or build it yourself
@@ -56,12 +65,14 @@ All requirements are implemented. How they were tested is described in
 git clone https://github.com/Robert060615/app-lab3.git
 cd app-lab3
 ./gradlew :app:fatJar
-java -jar app/build/libs/save-stats-1.0.0.jar samples/yellow-2.srm samples/yellow-3.srm
+java -jar app/build/libs/save-stats-1.1.0.jar samples/yellow-2.srm samples/yellow-3.srm
 ```
 
 On Windows, use `gradlew.bat` instead of `./gradlew`.
 
 ## Using the application
+
+### In the terminal
 
 When the files are loaded, a menu is shown. Type a number and press Enter.
 
@@ -109,6 +120,46 @@ replaced), and the full path is printed. Open it in a web browser.
   and progress charts.
 - Press **Ctrl+D** (Ctrl+Z then Enter on Windows) to quit at any time without saving.
 
+### In the web browser
+
+```bash
+java -jar save-stats-1.1.0.jar --web
+```
+
+```text
+Save Stats is running at http://localhost:8080
+Open it in a web browser. Press Ctrl+C to stop.
+```
+
+Open <http://localhost:8080>. On the page:
+
+1. **Save files:** choose one or more files. Hold Cmd (Ctrl on Windows) to choose several. They
+   are numbered *Save 1*, *Save 2* … in the order the browser hands them over, which you cannot
+   always control. Naming the files so they sort oldest first, for example `1-monday.sav` and
+   `2-friday.sav`, makes the order easy to check in the headings.
+2. **Charts:** tick the ones you want.
+   - *Party levels* and *Pokédex progress* are the same charts as in the terminal.
+   - *Stats and IVs for the whole party* draws both charts for every Pokémon in the party.
+   - *Progress between saves* can only be ticked when at least two files are chosen.
+3. **Color:** pick the color of the bars and lines.
+4. Click **Show charts**.
+
+The next page shows the charts for each file in turn, and each heading starts with the file name.
+The progress charts come last. To save the page, use your browser's *Save page as*. Press the back
+button to try other choices.
+
+If a file is not a valid save, or something is missing, a page explains what went wrong and links
+back to the start page. Up to ten save files can be sent at a time.
+
+Good to know:
+
+- The page is only reachable from your own computer. Other people on the network cannot open it.
+- Nothing is saved on the computer. The files are only used to draw the charts you asked for.
+- Party charts are left out for a save whose party is empty. The Pokédex and progress charts are
+  still shown.
+- If port 8080 is already in use, the application says so and stops. Close the other program, or
+  the other Save Stats, and try again.
+
 ## For developers
 
 ### How it is built
@@ -125,19 +176,30 @@ All application code is in `app/src/main/java/se/lnu/rm222xi/savestats/`:
 
 | Class | Responsibility |
 |---|---|
-| `App` | Entry point. Creates the objects and starts `SaveStatsApp`; nothing else. |
+| `App` | Entry point. Creates the objects and starts `SaveStatsApp`, or `WebServer` with `--web`; nothing else. |
 | `SaveStatsApp` | Runs one session: loads the files, runs the menu, saves the report. |
 | `ConsoleView` | Everything the user sees and types. Asks again until an answer is valid. |
 | `MenuOption` | The menu choices, in the order they are shown. |
-| `SaveLoader` | Reads a file and turns every kind of failure into one `SaveLoadException`. |
+| `SaveLoader` | Reads a file, or bytes sent from the browser, and turns every kind of failure into one `SaveLoadException`. |
 | `GameSave` | The only class that uses the savechecker module's types (besides `SaveLoader`). |
 | `ChartBuilder` | Turns save data into charts with svg-charts, in the chosen color. |
 | `Report`, `ReportSection` | The HTML page and the charts in it. |
 | `InputClosedException` | Thrown when the input ends (Ctrl+D), so the session can stop calmly. |
+| `WebServer` | The web mode. Serves the start page and the report on `localhost` with Java's built-in `HttpServer`, and shows error pages. |
+| `ReportRequest` | Reads the form data from the start page: the files, the ticked charts and the color. |
+| `ChartChoice`, `UploadedSave` | A chart that can be ticked on the start page, and a file sent from it. |
+| `WebReportBuilder` | Builds the whole report for one request, with its own `ChartBuilder` and `Report`. |
+| `InvalidRequestException` | Thrown when the form data is missing something. The message is shown to the user. |
+| `Html` | Escapes text before it is put in a page. |
+
+The start page is `app/src/main/resources/se/lnu/rm222xi/savestats/start-page.html`. Its
+JavaScript encodes each file in Base64 and sends it as an ordinary form field, so the server never
+has to read `multipart/form-data`. The server remembers nothing between requests.
 
 To add a new chart: add a method to `ChartBuilder` (and to `GameSave` if it needs new data), a
 value to `MenuOption`, and a case in `SaveStatsApp.handle`. The compiler points out the missing
-case.
+case. For the web mode, also add a value to `ChartChoice`, a checkbox with the same value on the
+start page, and a line in `WebReportBuilder`.
 
 ### Building and testing
 
@@ -145,8 +207,9 @@ case.
 |---|---|
 | `./gradlew build` | Compiles, runs the unit tests and checks the code with Checkstyle and PMD. |
 | `./gradlew :app:test` | Runs the unit tests. A summary is saved to `app/build/reports/test-summary.log`. |
-| `./gradlew :app:fatJar` | Builds `app/build/libs/save-stats-1.0.0.jar` with both modules inside. |
+| `./gradlew :app:fatJar` | Builds `app/build/libs/save-stats-1.1.0.jar` with both modules inside. |
 | `./gradlew :app:run --console=plain --args="../samples/red.sav"` | Runs from source. Paths are relative to `app/`; `--console=plain` keeps Gradle's progress bar out of the menu. |
+| `./gradlew :app:run --args="--web"` | Runs the web mode from source. Stop it with Ctrl+C. |
 
 ### Project structure
 
