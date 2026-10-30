@@ -51,7 +51,7 @@ made at least one test fail. For the web mode there were 18 more, for example no
 form data, reversing the order of the files, leaving out the IV charts, not skipping an empty
 party, or not escaping `&`. 17 made a test fail. The last one removed a check that skips empty
 fields between `&` signs. No test can notice it, because an empty field does no harm without the
-check either, so the check itself has no effect.
+check either. The check had no effect, so it was taken out of the code.
 
 ### What was hard to test
 

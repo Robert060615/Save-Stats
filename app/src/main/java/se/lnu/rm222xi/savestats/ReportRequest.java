@@ -68,10 +68,6 @@ final class ReportRequest {
       throws InvalidRequestException {
     Map<String, List<String>> fields = new LinkedHashMap<>();
     for (String pair : formData.split("&")) {
-      if (pair.isEmpty()) {
-        continue;
-      }
-
       String[] nameAndValue = pair.split("=", 2);
       String name = decode(nameAndValue[0]);
       String value = nameAndValue.length == 2 ? decode(nameAndValue[1]) : "";
