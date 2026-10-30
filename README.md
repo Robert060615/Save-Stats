@@ -45,7 +45,7 @@ All requirements are implemented. How they were tested is described in
 ### Download and run
 
 1. Download `save-stats-1.1.0.jar` from the
-   [latest release](https://github.com/Robert060615/app-lab3/releases/latest).
+   [latest release](https://github.com/Robert060615/Save-Stats/releases/latest).
 2. Open a terminal in the folder where the file is and run it with your save files, oldest first:
 
    ```bash
@@ -62,8 +62,8 @@ All requirements are implemented. How they were tested is described in
 ### Or build it yourself
 
 ```bash
-git clone https://github.com/Robert060615/app-lab3.git
-cd app-lab3
+git clone https://github.com/Robert060615/Save-Stats.git
+cd Save-Stats
 ./gradlew :app:fatJar
 java -jar app/build/libs/save-stats-1.1.0.jar samples/yellow-2.srm samples/yellow-3.srm
 ```
