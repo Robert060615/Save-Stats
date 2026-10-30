@@ -30,7 +30,7 @@ public class App {
     try {
       WebServer server = new WebServer(WEB_PORT, new WebReportBuilder(new SaveLoader()));
       server.start();
-      view.showMessage("Save Stats is running at " + server.address());
+      view.showMessage("Save Stats is running at http://localhost:" + WEB_PORT);
       view.showMessage("Open it in a web browser. Press Ctrl+C to stop.");
     } catch (IOException e) {
       view.showError("Could not start the web server on port " + WEB_PORT + ": " + e.getMessage());

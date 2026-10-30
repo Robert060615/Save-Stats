@@ -8,17 +8,15 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Executors;
 import se.lnu.rm222xi.svgcharts.ChartDataException;
 
 /**
  * Serves Save Stats to a web browser on this computer. It only listens on localhost, so nobody
- * else on the network can reach it.
+ * else on the network can reach it. Requests are handled one at a time, which is plenty for one
+ * user.
  */
 class WebServer {
 
-  /** Lets a few requests run at the same time instead of one after another. */
-  private static final int THREADS = 4;
   private static final int HTTP_OK = 200;
   private static final int HTTP_BAD_REQUEST = 400;
   private static final String START_PAGE_FILE = "start-page.html";
@@ -41,20 +39,10 @@ class WebServer {
     server = HttpServer.create(address, 0);
     server.createContext("/", this::showStartPage);
     server.createContext("/report", this::showReport);
-    server.setExecutor(Executors.newFixedThreadPool(THREADS));
   }
 
   void start() {
     server.start();
-  }
-
-  /**
-   * Gives the address to open in the browser.
-   *
-   * @return the address, for example {@code http://localhost:8080}
-   */
-  String address() {
-    return "http://localhost:" + server.getAddress().getPort();
   }
 
   private void showStartPage(HttpExchange exchange) throws IOException {

@@ -5,8 +5,7 @@ import java.util.List;
 
 /**
  * Builds the whole report in one go from the choices on the start page. Each call gets its own
- * {@link ChartBuilder} and {@link Report}, so requests running at the same time never share
- * anything.
+ * {@link ChartBuilder} and {@link Report}, so nothing carries over from one request to the next.
  */
 class WebReportBuilder {
 
