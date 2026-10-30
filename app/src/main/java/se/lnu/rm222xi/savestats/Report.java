@@ -34,14 +34,10 @@ class Report {
         .append("</head>\n<body>\n<h1>Save Stats report</h1>\n");
 
     for (ReportSection section : sections) {
-      html.append("<section>\n<h2>").append(escape(section.heading())).append("</h2>\n")
+      html.append("<section>\n<h2>").append(Html.escape(section.heading())).append("</h2>\n")
           .append(section.svg()).append("\n</section>\n");
     }
 
     return html.append("</body>\n</html>\n").toString();
-  }
-
-  private String escape(String text) {
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
   }
 }

@@ -19,6 +19,9 @@ class WebServer {
 
   private static final int HTTP_OK = 200;
   private static final int HTTP_BAD_REQUEST = 400;
+  private static final int HTTP_PAYLOAD_TOO_LARGE = 413;
+  /** Room for ten saves: one is about 131 kB once it is Base64 and URL encoded. */
+  private static final int MAX_REQUEST_BYTES = 1_500_000;
   private static final String START_PAGE_FILE = "start-page.html";
   private final HttpServer server;
   private final String startPage;
@@ -46,17 +49,39 @@ class WebServer {
   }
 
   private void showStartPage(HttpExchange exchange) throws IOException {
-    send(exchange, HTTP_OK, "text/html", startPage);
+    sendHtml(exchange, HTTP_OK, startPage);
   }
 
+  /**
+   * Builds the report from the form on the start page. Reads one byte more than the limit, to
+   * notice a request that is too large without reading all of it into memory.
+   */
   private void showReport(HttpExchange exchange) throws IOException {
-    String formData = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-    try {
-      Report report = reportBuilder.build(ReportRequest.fromFormData(formData));
-      send(exchange, HTTP_OK, "text/html", report.toHtml());
-    } catch (InvalidRequestException | SaveLoadException | ChartDataException e) {
-      send(exchange, HTTP_BAD_REQUEST, "text/plain", e.getMessage());
+    byte[] body = exchange.getRequestBody().readNBytes(MAX_REQUEST_BYTES + 1);
+    if (body.length > MAX_REQUEST_BYTES) {
+      showError(exchange, HTTP_PAYLOAD_TOO_LARGE,
+          "The files are too large. A save file is 32 kB, and at most ten fit at a time.");
+      return;
     }
+
+    try {
+      String formData = new String(body, StandardCharsets.UTF_8);
+      Report report = reportBuilder.build(ReportRequest.fromFormData(formData));
+      sendHtml(exchange, HTTP_OK, report.toHtml());
+    } catch (InvalidRequestException | SaveLoadException | ChartDataException e) {
+      showError(exchange, HTTP_BAD_REQUEST, e.getMessage());
+    }
+  }
+
+  private void showError(HttpExchange exchange, int status, String message) throws IOException {
+    sendHtml(exchange, status, "<!DOCTYPE html>\n"
+        + "<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n"
+        + "<title>Save Stats - error</title>\n"
+        + "<style>body{font-family:sans-serif;max-width:640px;margin:2em auto;}</style>\n"
+        + "</head>\n<body>\n<h1>The charts could not be shown</h1>\n"
+        + "<p>" + Html.escape(message) + "</p>\n"
+        + "<p><a href=\"/\">Back to the start page</a></p>\n"
+        + "</body>\n</html>\n");
   }
 
   /**
@@ -76,10 +101,9 @@ class WebServer {
     }
   }
 
-  private void send(HttpExchange exchange, int status, String contentType, String text)
-      throws IOException {
-    byte[] body = text.getBytes(StandardCharsets.UTF_8);
-    exchange.getResponseHeaders().set("Content-Type", contentType + "; charset=utf-8");
+  private void sendHtml(HttpExchange exchange, int status, String html) throws IOException {
+    byte[] body = html.getBytes(StandardCharsets.UTF_8);
+    exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
     exchange.sendResponseHeaders(status, body.length);
     try (OutputStream output = exchange.getResponseBody()) {
       output.write(body);
