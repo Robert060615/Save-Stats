@@ -67,7 +67,7 @@ class WebServer {
     try {
       String formData = new String(body, StandardCharsets.UTF_8);
       Report report = reportBuilder.build(ReportRequest.fromFormData(formData));
-      sendHtml(exchange, HTTP_OK, report.toHtml());
+      sendHtml(exchange, HTTP_OK, report.toHtmlWithLinkTo("/"));
     } catch (InvalidRequestException | SaveLoadException | ChartDataException e) {
       showError(exchange, HTTP_BAD_REQUEST, e.getMessage());
     }

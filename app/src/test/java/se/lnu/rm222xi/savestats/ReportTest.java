@@ -56,4 +56,36 @@ class ReportTest {
 
     assertTrue(html.contains("<h2>&lt;b&gt; &amp; co</h2>"));
   }
+
+  @Test
+  @DisplayName("should have no links when saved as a file")
+  void hasNoLinkAsFile() {
+    report.add(new ReportSection("Heading", "<svg></svg>"));
+
+    assertFalse(report.toHtml().contains("<a "));
+  }
+
+  @Test
+  @DisplayName("should link to the given address above and below the charts")
+  void linksAboveAndBelowCharts() {
+    report.add(new ReportSection("Heading", "<svg></svg>"));
+
+    String html = report.toHtmlWithLinkTo("/");
+
+    String link = "<a href=\"/\">&larr; Back to the start page</a>";
+    int chart = html.indexOf("<svg>");
+    assertTrue(html.indexOf(link) < chart);
+    assertTrue(html.lastIndexOf(link) > chart);
+  }
+
+  @Test
+  @DisplayName("should show the same charts with or without the link")
+  void sameChartsWithLink() {
+    report.add(new ReportSection("Heading", "<svg id=\"chart\"></svg>"));
+
+    String html = report.toHtmlWithLinkTo("/");
+
+    assertTrue(html.contains("<h2>Heading</h2>"));
+    assertTrue(html.contains("<svg id=\"chart\"></svg>"));
+  }
 }
