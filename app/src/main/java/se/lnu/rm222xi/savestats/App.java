@@ -28,7 +28,7 @@ public class App {
 
   private static void startWebServer(ConsoleView view) {
     try {
-      WebServer server = new WebServer(WEB_PORT);
+      WebServer server = new WebServer(WEB_PORT, new WebReportBuilder(new SaveLoader()));
       server.start();
       view.showMessage("Save Stats is running at " + server.address());
       view.showMessage("Open it in a web browser. Press Ctrl+C to stop.");
