@@ -99,6 +99,18 @@ class WebReportBuilderTest {
   }
 
   @Test
+  @DisplayName("should list the files under the heading of the first progress chart")
+  void listsSavesAboveProgressCharts() throws Exception {
+    Report report = build(new FormData().chart("progress").color(ORANGE)
+        .save("a.srm", yellow).save("b.srm", otherYellow));
+
+    String html = report.toHtml();
+
+    assertTrue(html.contains("<h2>Pokémon caught per save</h2>\n<ul>\n"
+        + "<li>Save 1: a.srm (trainer A)</li>\n<li>Save 2: b.srm (trainer YELLOW)</li>\n</ul>"));
+  }
+
+  @Test
   @DisplayName("should leave out party charts for an empty party but keep the Pokédex")
   void skipsEmptyParty() throws Exception {
     Report report = build(new FormData().chart("partyLevels").chart("team").chart("pokedex")

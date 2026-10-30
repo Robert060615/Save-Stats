@@ -120,6 +120,21 @@ class ChartBuilderTest {
       assertEquals(title, section.heading());
       assertEquals(draw(new LineChart(), title, saveLabels, List.of(3.0, 0.0)), section.svg());
     }
+
+    @Test
+    @DisplayName("the caught chart should say which file each save label stands for")
+    void caughtOverTimeListsSaves() {
+      ReportSection section = chartBuilder.caughtOverTime(saves);
+
+      assertEquals(List.of("Save 1: yellow-2.srm (trainer A)",
+          "Save 2: yellow-3.srm (trainer YELLOW)"), section.notes());
+    }
+
+    @Test
+    @DisplayName("the badge chart should not repeat the list, since it comes right after")
+    void badgesOverTimeHasNoNotes() {
+      assertTrue(chartBuilder.badgesOverTime(saves).notes().isEmpty());
+    }
   }
 
   @Nested

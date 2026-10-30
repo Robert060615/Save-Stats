@@ -3,6 +3,7 @@ package se.lnu.rm222xi.savestats;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -87,5 +88,32 @@ class ReportTest {
 
     assertTrue(html.contains("<h2>Heading</h2>"));
     assertTrue(html.contains("<svg id=\"chart\"></svg>"));
+  }
+
+  @Test
+  @DisplayName("should show the notes as a list between the heading and the chart")
+  void showsNotesBetweenHeadingAndChart() {
+    report.add(new ReportSection("Heading", "<svg></svg>", List.of("First", "Second")));
+
+    String html = report.toHtml();
+
+    assertTrue(html.contains("<h2>Heading</h2>\n<ul>\n<li>First</li>\n<li>Second</li>\n</ul>\n"
+        + "<svg></svg>"));
+  }
+
+  @Test
+  @DisplayName("should have no list for a section without notes")
+  void noListWithoutNotes() {
+    report.add(new ReportSection("Heading", "<svg></svg>"));
+
+    assertFalse(report.toHtml().contains("<ul>"));
+  }
+
+  @Test
+  @DisplayName("should escape characters in notes that would break the HTML")
+  void escapesNotes() {
+    report.add(new ReportSection("Heading", "<svg></svg>", List.of("Save 1: <b>.sav")));
+
+    assertTrue(report.toHtml().contains("<li>Save 1: &lt;b&gt;.sav</li>"));
   }
 }

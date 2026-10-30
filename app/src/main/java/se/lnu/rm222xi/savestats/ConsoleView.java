@@ -33,8 +33,7 @@ class ConsoleView {
   }
 
   void showLoadedSave(int saveNumber, GameSave save) {
-    output.println("Save " + saveNumber + ": " + save.getFileName()
-        + " (trainer " + save.getTrainerName() + ")");
+    output.println("Save " + saveNumber + ": " + save.getDescription());
   }
 
   void showMessage(String message) {

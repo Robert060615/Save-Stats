@@ -49,10 +49,23 @@ class Report {
         .append("</head>\n<body>\n").append(link).append("<h1>Save Stats report</h1>\n");
 
     for (ReportSection section : sections) {
-      html.append("<section>\n<h2>").append(Html.escape(section.heading())).append("</h2>\n")
-          .append(section.svg()).append("\n</section>\n");
+      html.append("<section>\n<h2>").append(Html.escape(section.heading())).append("</h2>\n");
+      appendNotes(html, section.notes());
+      html.append(section.svg()).append("\n</section>\n");
     }
 
     return html.append(link).append("</body>\n</html>\n").toString();
+  }
+
+  private void appendNotes(StringBuilder html, List<String> notes) {
+    if (notes.isEmpty()) {
+      return;
+    }
+
+    html.append("<ul>\n");
+    for (String note : notes) {
+      html.append("<li>").append(Html.escape(note)).append("</li>\n");
+    }
+    html.append("</ul>\n");
   }
 }

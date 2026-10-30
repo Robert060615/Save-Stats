@@ -38,6 +38,15 @@ class GameSave {
     return saveFile.getTrainer().getName();
   }
 
+  /**
+   * Describes the save in a few words, the same way in the terminal and in the report.
+   *
+   * @return the file name and trainer, for example {@code "red.sav (trainer A)"}
+   */
+  String getDescription() {
+    return fileName + " (trainer " + getTrainerName() + ")";
+  }
+
   int getBadgeCount() {
     return saveFile.getTrainer().getBadges().size();
   }

@@ -58,11 +58,20 @@ class ChartBuilder {
     return drawBarSection(title, save.getIvsOf(partyIndex));
   }
 
+  /**
+   * Draws the number of Pokémon caught in each save. The section lists which file each
+   * <i>Save 1</i>, <i>Save 2</i> … stands for, since the file names do not fit under the chart.
+   * The badge chart is meant to come right after it and uses the same labels.
+   *
+   * @param saves the saves, in the order the user gave them
+   * @return the chart with the list of saves as notes
+   */
   ReportSection caughtOverTime(List<GameSave> saves) {
     List<Double> caughtCounts = saves.stream().map(save -> (double) save.getCaughtCount()).toList();
-    return drawSection(new LineChart(createOptions()),
+    ReportSection chart = drawSection(new LineChart(createOptions()),
         "Pokémon caught per save",
         saveNumbersOf(saves), caughtCounts);
+    return new ReportSection(chart.heading(), chart.svg(), describeSaves(saves));
   }
 
   ReportSection badgesOverTime(List<GameSave> saves) {
@@ -79,6 +88,12 @@ class ChartBuilder {
 
   private List<String> saveNumbersOf(List<GameSave> saves) {
     return IntStream.rangeClosed(1, saves.size()).mapToObj(number -> "Save " + number).toList();
+  }
+
+  private List<String> describeSaves(List<GameSave> saves) {
+    List<String> labels = saveNumbersOf(saves);
+    return IntStream.range(0, saves.size())
+        .mapToObj(i -> labels.get(i) + ": " + saves.get(i).getDescription()).toList();
   }
 
   private ReportSection drawSection(SvgChart chart, String title, List<String> labels,
